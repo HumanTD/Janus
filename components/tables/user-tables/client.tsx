@@ -22,12 +22,12 @@ export const UserClient: React.FC<ProductsClientProps> = ({ data }) => {
           title={`Recruiters (${data.length})`}
           description="Overview of all the targeted recruiters based on your profile."
         />
-        <Button
+        {/* <Button
           className="text-xs md:text-sm"
           onClick={() => router.push(`/dashboard/user/new`)}
         >
           <Plus className="mr-2 h-4 w-4" /> Add New
-        </Button>
+        </Button> */}
       </div>
       <Separator />
       <DataTable searchKey="name" columns={columns} data={data} />
