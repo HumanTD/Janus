@@ -10,6 +10,8 @@ interface EmailModalProps {
   onConfirm: () => void;
   loading: boolean;
   email: string;
+  finalEmail: string;
+  setFinalEmail: (value: string) => void;
 }
 
 export const EmailModal: React.FC<EmailModalProps> = ({
@@ -18,6 +20,8 @@ export const EmailModal: React.FC<EmailModalProps> = ({
   onConfirm,
   loading,
   email,
+  finalEmail,
+  setFinalEmail,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
 
@@ -40,12 +44,15 @@ export const EmailModal: React.FC<EmailModalProps> = ({
         <Textarea
           className="w-full"
           placeholder="Write your email here..."
-        //   value="Email"
+          value={finalEmail}
           rows={10}
+          onChange={(e) => {
+            setFinalEmail(e.target.value);
+          }}
         />
         <Button
           className="m-5"
-          disabled={loading}
+          // disabled={loading}
           variant="secondary"
           onClick={onConfirm}
         >

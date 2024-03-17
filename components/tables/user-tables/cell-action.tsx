@@ -13,6 +13,8 @@ import { User } from "@/constants/data";
 import { Edit, Linkedin, Mail, MoreHorizontal, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { ToastAction } from "@/components/ui/toast";
+import { useToast } from "@/components/ui/use-toast";
 
 interface CellActionProps {
   data: User;
@@ -24,8 +26,46 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const router = useRouter();
   const [emailModalOpen, setEmailModalOpen] = useState(false);
   const [emailModalLoading, setEmailModalLoading] = useState(false);
+  const { toast } = useToast();
+  const [finalEmail, setFinalEmail] = useState("");
 
   const onConfirm = async () => {};
+
+  const onSendEmail = async () => {
+    try {
+      const res = await fetch("/api/emails/recruiter", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: "nilaynathsharan16@gmail.com",
+          content: finalEmail,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        toast({
+          title: "Email sent successfully",
+          description: "The email has been sent successfully",
+        });
+        setEmailModalOpen(false);
+      } else {
+        toast({
+          title: "Something went wrong!",
+          description: data.message,
+        });
+      }
+    } catch (e: any) {
+      // console.log(e);
+      toast({
+        title: "Something went wrong!",
+        description: e.message,
+      });
+    }
+  };
 
   return (
     <>
@@ -38,9 +78,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       <EmailModal
         isOpen={emailModalOpen}
         onClose={() => setEmailModalOpen(false)}
-        onConfirm={onConfirm}
+        onConfirm={onSendEmail}
         loading={emailModalLoading}
-        email={"bobby@yogirt.com"}
+        email={"nilaynathsharan16@gmail.com"}
+        finalEmail={finalEmail}
+        setFinalEmail={setFinalEmail}
       />
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
@@ -51,9 +93,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem
-            onClick={() => setEmailModalOpen(true)}
-          >
+          <DropdownMenuItem onClick={() => setEmailModalOpen(true)}>
             <Mail className="mr-2 h-4 w-4" /> Send Email
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setOpen(true)}>
