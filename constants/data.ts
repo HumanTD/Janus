@@ -135,22 +135,22 @@ export const navItems: NavItem[] = [
     icon: "user",
     label: "user",
   },
-  {
-    title: "Companies",
-    href: "/dashboard/employee",
-    icon: "building",
-    label: "Company",
-  },
-  {
-    title: "Profile",
-    href: "/dashboard/profile",
-    icon: "profile",
-    label: "profile",
-  },
-  {
-    title: "Kanban",
-    href: "/dashboard/kanban",
-    icon: "kanban",
-    label: "kanban",
-  },
+  // {
+  //   title: "Companies",
+  //   href: "/dashboard/employee",
+  //   icon: "building",
+  //   label: "Company",
+  // },
+  // {
+  //   title: "Profile",
+  //   href: "/dashboard/profile",
+  //   icon: "profile",
+  //   label: "profile",
+  // },
+  // {
+  //   title: "Kanban",
+  //   href: "/dashboard/kanban",
+  //   icon: "kanban",
+  //   label: "kanban",
+  // },
 ];
