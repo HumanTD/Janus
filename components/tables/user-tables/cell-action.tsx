@@ -62,6 +62,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         });
       }
       setFinalEmail("");
+      setFinalSubject("");
     } catch (e: any) {
       // console.log(e);
       toast({
@@ -69,6 +70,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         description: e.message,
       });
       setFinalEmail("");
+      setFinalSubject("");
     }
   };
 
