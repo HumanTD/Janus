@@ -59,12 +59,14 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           description: jsonData.message,
         });
       }
+      setFinalEmail("");
     } catch (e: any) {
       // console.log(e);
       toast({
         title: "Something went wrong!",
         description: e.message,
       });
+      setFinalEmail("");
     }
   };
 
