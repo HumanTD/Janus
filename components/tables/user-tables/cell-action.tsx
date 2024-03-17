@@ -1,5 +1,6 @@
 "use client";
 import { AlertModal } from "@/components/modal/alert-modal";
+import { EmailModal } from "@/components/modal/email-modal";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { User } from "@/constants/data";
-import { Edit, MoreHorizontal, Trash } from "lucide-react";
+import { Edit, Linkedin, Mail, MoreHorizontal, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -21,6 +22,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const [emailModalOpen, setEmailModalOpen] = useState(false);
+  const [emailModalLoading, setEmailModalLoading] = useState(false);
 
   const onConfirm = async () => {};
 
@@ -32,6 +35,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         onConfirm={onConfirm}
         loading={loading}
       />
+      <EmailModal
+        isOpen={emailModalOpen}
+        onClose={() => setEmailModalOpen(false)}
+        onConfirm={onConfirm}
+        loading={emailModalLoading}
+        email={"bobby@yogirt.com"}
+      />
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
@@ -41,7 +51,14 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
+          <DropdownMenuItem
+            onClick={() => setEmailModalOpen(true)}
+          >
+            <Mail className="mr-2 h-4 w-4" /> Send Email
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setOpen(true)}>
+            <Linkedin className="mr-2 h-4 w-4" /> Send LinkedIn Message
+          </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => router.push(`/dashboard/user/${data.id}`)}
           >
