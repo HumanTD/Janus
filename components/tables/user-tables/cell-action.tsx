@@ -29,6 +29,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [emailModalLoading, setEmailModalLoading] = useState(false);
   const { toast } = useToast();
   const [finalEmail, setFinalEmail] = useState("");
+  const [finalSubject, setFinalSubject] = useState("");
 
   const onConfirm = async () => {};
 
@@ -42,6 +43,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         body: JSON.stringify({
           email: data.email,
           content: finalEmail,
+          subject: finalSubject,
         }),
       });
 
@@ -86,6 +88,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         email={data.email}
         finalEmail={finalEmail}
         setFinalEmail={setFinalEmail}
+        finalSubject={finalSubject}
+        setFinalSubject={setFinalSubject}
       />
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>

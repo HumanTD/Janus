@@ -6,9 +6,15 @@ export async function POST(request: Request) {
 
   const email = body.email;
   const content = body.content;
-  
+  const subject = body.subject;
+
+  if (!email || !content || !subject)
+    return NextResponse.json({
+      success: false,
+      message: "Please provide all the fields",
+    });
+
   try {
-    const subject = "Welcome to our platform";
     const text = "We are excited to have you on board";
 
     await sendMail(email, subject, content);

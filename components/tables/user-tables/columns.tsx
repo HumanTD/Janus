@@ -36,10 +36,10 @@ export const columns: ColumnDef<User>[] = [
     accessorKey: "role",
     header: "ROLE",
   },
-  {
-    accessorKey: "status",
-    header: "STATUS",
-  },
+  // {
+  //   accessorKey: "status",
+  //   header: "STATUS",
+  // },
   {
     id: "actions",
     cell: ({ row }) => <CellAction data={row.original} />,
