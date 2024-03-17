@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/components/ui/use-toast";
+import { Row } from "@tanstack/react-table";
 
 interface CellActionProps {
   data: User;
@@ -39,14 +40,14 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email: "nilaynathsharan16@gmail.com",
+          email: data.email,
           content: finalEmail,
         }),
       });
 
-      const data = await res.json();
+      const jsonData = await res.json();
 
-      if (data.success) {
+      if (jsonData.success) {
         toast({
           title: "Email sent successfully",
           description: "The email has been sent successfully",
@@ -55,7 +56,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       } else {
         toast({
           title: "Something went wrong!",
-          description: data.message,
+          description: jsonData.message,
         });
       }
     } catch (e: any) {
@@ -80,7 +81,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         onClose={() => setEmailModalOpen(false)}
         onConfirm={onSendEmail}
         loading={emailModalLoading}
-        email={"nilaynathsharan16@gmail.com"}
+        email={data.email}
         finalEmail={finalEmail}
         setFinalEmail={setFinalEmail}
       />
