@@ -22,7 +22,12 @@ export async function POST(request: Request) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ resume: user?.resume }),
+      body: JSON.stringify({
+        resume: user?.resume,
+        companyName: body.companyName,
+        poc: body.poc,
+        role: body.role,
+      }),
     });
     const data = await res.json();
     console.log(data);

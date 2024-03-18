@@ -87,6 +87,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         },
         body: JSON.stringify({
           email: session?.user?.email,
+          companyName: data.company,
+          poc: data.name,
+          role: data.role,
         }),
       });
 
