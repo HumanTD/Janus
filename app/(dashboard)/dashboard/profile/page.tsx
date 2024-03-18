@@ -42,6 +42,48 @@ export default function page() {
     }
   }, []);
 
+  console.log(session);
+
+  const storeResumeUrl = async (resumeUrl:string) => {
+    if (!resumeUrl) {
+      toast({
+        title: "Something went wrong!",
+        description: "Please upload a file.",
+      });
+      return;
+    }
+
+    const res = await fetch("/api/profile/resume", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ resumeUrl: resumeUrl, userEmail: session?.user?.email }),
+    });
+
+    if(!res.ok) {
+      toast({
+        title: "Something went wrong!",
+        description: "Please try again.",
+      });
+      return;
+    }
+
+    const data = await res.json();
+
+    if (data.success) {
+      toast({
+        title: "Resume stored successfully!",
+        description: "You can now view it in your profile.",
+      });
+    } else {
+      toast({
+        title: "Something went wrong!",
+        description: "Please try again.",
+      });
+    }
+  };
+
   const storeCredentials = async () => {
     if (!username || !password || !email) {
       toast({
@@ -118,6 +160,7 @@ export default function page() {
                 },
               });
               setUrl(res.url);
+              await storeResumeUrl(res.url);
               setProcessing(false);
             }
           }}
@@ -125,7 +168,7 @@ export default function page() {
           Upload
         </Button>
         {processing && <Progress value={progress} className="w-[20%]" />}
-        {url && <a>{url}</a>}
+        {/* {url && <a>{url}</a>} */}
 
         <h1 className="font-bold">Add your linkedIn credentials here!</h1>
         <p>
@@ -171,8 +214,12 @@ export default function page() {
           </p>
         )}
         <div className="flex">
-          <Button className="mx-5" onClick={storeCredentials}>Save!</Button>
-          <Button className="mx-5" onClick={resetCredentials}>Reset</Button>
+          <Button className="mx-5" onClick={storeCredentials}>
+            Save!
+          </Button>
+          <Button className="mx-5" onClick={resetCredentials}>
+            Reset
+          </Button>
         </div>
       </div>
     </ScrollArea>
