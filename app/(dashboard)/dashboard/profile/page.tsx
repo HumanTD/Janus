@@ -28,6 +28,9 @@ export default function page() {
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [fieldsPresent, setFieldsPresent] = useState(false);
+
+  const [resumeUrl, setResumeUrl] = useState("");
+
   useEffect(() => {
     const storedEmail = localStorage.getItem("linkedin-email");
     const storedPassword = localStorage.getItem("linkedin-password");
@@ -42,9 +45,41 @@ export default function page() {
     }
   }, []);
 
+  const getUserData = async () => {
+    const res = await fetch("/api/profile", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userEmail: session?.user?.email }),
+    });
+
+    if (!res.ok) {
+      toast({
+        title: "Something went wrong!",
+        description: "Please try again.",
+      });
+      return;
+    }
+
+    const data = await res.json();
+    setResumeUrl(data.user.resume);
+
+    if (!data.success) {
+      toast({
+        title: "Something went wrong!",
+        description: data.message,
+      });
+    }
+  };
+
+  useEffect(() => {
+    getUserData();
+  }, []);
+
   console.log(session);
 
-  const storeResumeUrl = async (resumeUrl:string) => {
+  const storeResumeUrl = async (resumeUrl: string) => {
     if (!resumeUrl) {
       toast({
         title: "Something went wrong!",
@@ -58,10 +93,13 @@ export default function page() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ resumeUrl: resumeUrl, userEmail: session?.user?.email }),
+      body: JSON.stringify({
+        resumeUrl: resumeUrl,
+        userEmail: session?.user?.email,
+      }),
     });
 
-    if(!res.ok) {
+    if (!res.ok) {
       toast({
         title: "Something went wrong!",
         description: "Please try again.",
@@ -138,35 +176,60 @@ export default function page() {
         <h2 className="text-3xl font-bold tracking-tight">
           Hi, {session?.user?.name} 👋
         </h2>
-        <h1>Upload your resume here!</h1>
-        <SingleImageDropzone
-          width={200}
-          height={200}
-          value={file}
-          onChange={(file) => {
-            setFile(file);
-          }}
-        />
-        <Button
-          type="submit"
-          disabled={processing}
-          onClick={async (e) => {
-            if (file) {
-              setProcessing(true);
-              const res = await edgestore.publicFiles.upload({
-                file,
-                onProgressChange: (progress) => {
-                  setProgress(progress);
-                },
-              });
-              setUrl(res.url);
-              await storeResumeUrl(res.url);
-              setProcessing(false);
-            }
-          }}
-        >
-          Upload
-        </Button>
+        {!resumeUrl ? (
+          <>
+            <h1>Upload your resume here!</h1>
+            <SingleImageDropzone
+              width={200}
+              height={200}
+              value={file}
+              onChange={(file) => {
+                setFile(file);
+              }}
+            />
+            <Button
+              type="submit"
+              disabled={processing}
+              onClick={async (e) => {
+                if (file) {
+                  setProcessing(true);
+                  const res = await edgestore.publicFiles.upload({
+                    file,
+                    onProgressChange: (progress) => {
+                      setProgress(progress);
+                    },
+                  });
+                  setUrl(res.url);
+                  setResumeUrl(res.url);
+                  await storeResumeUrl(res.url);
+                  setProcessing(false);
+                }
+              }}
+            >
+              Upload
+            </Button>
+          </>
+        ) : (
+          <>
+            <h1>Resume uploaded!</h1>
+            <Button
+              className="mx-2"
+              onClick={() => {
+                window.open(resumeUrl, '_blank');
+              }}
+            >
+              View
+            </Button>
+            <Button
+              className="mx-2"
+              onClick={() => {
+                setResumeUrl("");
+              }}
+            >
+              Reupload
+            </Button>
+          </>
+        )}
         {processing && <Progress value={progress} className="w-[20%]" />}
         {/* {url && <a>{url}</a>} */}
 
@@ -214,10 +277,10 @@ export default function page() {
           </p>
         )}
         <div className="flex">
-          <Button className="mx-5" onClick={storeCredentials}>
+          <Button className="mx-2" onClick={storeCredentials}>
             Save!
           </Button>
-          <Button className="mx-5" onClick={resetCredentials}>
+          <Button className="mx-2" onClick={resetCredentials}>
             Reset
           </Button>
         </div>
