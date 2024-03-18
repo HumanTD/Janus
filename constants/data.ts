@@ -131,9 +131,9 @@ export const navItems: NavItem[] = [
   },
   {
     title: "Recruiters",
-    href: "/dashboard/user",
+    href: "/dashboard/recruiters",
     icon: "user",
-    label: "user",
+    label: "recruiters",
   },
   // {
   //   title: "Companies",

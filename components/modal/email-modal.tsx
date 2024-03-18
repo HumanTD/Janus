@@ -17,8 +17,8 @@ interface EmailModalProps {
   setFinalEmail: (value: string) => void;
   finalSubject: string;
   setFinalSubject: (value: string) => void;
-  companyName: string;
-  role: string;
+  isLoading: boolean;
+  setIsLoading: (value: boolean) => void;
 }
 
 export const EmailModal: React.FC<EmailModalProps> = ({
@@ -31,11 +31,10 @@ export const EmailModal: React.FC<EmailModalProps> = ({
   setFinalEmail,
   finalSubject,
   setFinalSubject,
-  companyName,
-  role,
+  isLoading,
+  setIsLoading,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const [progress, setProgress] = useState(0);
   const { data: session } = useSession();
 
@@ -57,46 +56,6 @@ export const EmailModal: React.FC<EmailModalProps> = ({
       setProgress(100);
     }
   }, [isLoading]);
-
-  const getEmailContent = async () => {
-    setIsLoading(true);
-    try {
-      const res = await fetch("/api/emails/content", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email,
-        }),
-      });
-
-      const jsonData = await res.json();
-
-      if (jsonData.success) {
-        const emailContent = jsonData.data.message;
-        setFinalEmail(
-          emailContent + `\n\nBest Regards,\n${session?.user?.name}`
-        );
-        setFinalSubject(`Application for ${role} at ${companyName}`);
-        setIsLoading(false);
-      } else {
-        toast({
-          title: "Something went wrong!",
-          description: jsonData.message,
-        });
-        setIsLoading(false);
-      }
-    } catch (error) {
-      console.error("Failed to fetch email content:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    getEmailContent();
-  }, []);
 
   if (!isMounted) {
     return null;

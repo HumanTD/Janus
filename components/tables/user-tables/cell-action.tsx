@@ -16,6 +16,7 @@ import { useState } from "react";
 import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/components/ui/use-toast";
 import { Row } from "@tanstack/react-table";
+import { useSession } from "next-auth/react";
 
 interface CellActionProps {
   data: User;
@@ -30,6 +31,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const { toast } = useToast();
   const [finalEmail, setFinalEmail] = useState("");
   const [finalSubject, setFinalSubject] = useState("");
+  const [emailFetchLoading, setEmailFetchLoading] = useState(true);
+  const { data: session } = useSession();
 
   const onConfirm = async () => {};
 
@@ -74,6 +77,42 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     }
   };
 
+  const getEmailContent = async () => {
+    setEmailFetchLoading(true);
+    try {
+      const res = await fetch("/api/emails/content", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: session?.user?.email,
+        }),
+      });
+
+      const jsonData = await res.json();
+
+      if (jsonData.success) {
+        const emailContent = jsonData.data.message;
+        setFinalEmail(
+          emailContent + `\n\nBest Regards,\n${session?.user?.name}`
+        );
+        setFinalSubject(`Application for ${data.role} at ${data.company}`);
+        setEmailFetchLoading(false);
+      } else {
+        toast({
+          title: "Something went wrong!",
+          description: jsonData.message,
+        });
+        setEmailFetchLoading(false);
+      }
+    } catch (error) {
+      console.error("Failed to fetch email content:", error);
+    } finally {
+      setEmailFetchLoading(false);
+    }
+  };
+
   return (
     <>
       <AlertModal
@@ -92,8 +131,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         setFinalEmail={setFinalEmail}
         finalSubject={finalSubject}
         setFinalSubject={setFinalSubject}
-        companyName={data.company}
-        role={data.role}
+        isLoading={emailFetchLoading}
+        setIsLoading={setEmailFetchLoading}
       />
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
@@ -104,7 +143,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => setEmailModalOpen(true)}>
+          <DropdownMenuItem onClick={async () => {
+            setEmailModalOpen(true);
+            await getEmailContent();
+          }}>
             <Mail className="mr-2 h-4 w-4" /> Send Email
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setOpen(true)}>

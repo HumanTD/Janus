@@ -17,15 +17,16 @@ export async function POST(request: Request) {
       },
     });
 
-    // const res = await fetch("https://api.sendgrid.com/v3/mail/send", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({ resume: user?.resume }),
-    // });
-    // const data = await res.json();
-    return NextResponse.json({ success: true, data: {message: "Hello world!"} });
+    const res = await fetch("https://bac7-136-233-9-98.ngrok-free.app", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ resume: user?.resume }),
+    });
+    const data = await res.json();
+    console.log(data);
+    return NextResponse.json({ success: true, data });
   } catch (e: any) {
     return NextResponse.json({ success: false, message: e.message });
   }
