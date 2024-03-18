@@ -12,11 +12,28 @@ import {
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { RefreshCcw } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useState } from "react";
 
 export default function page() {
   const { data: session } = useSession();
   if (!session) return null;
+
+  const [jobList, setJobList] = useState([]) as any[];
+
+  const fetchJobs = async () => {
+    setJobList([]);
+    const res = await fetch("/api/jobs/getAll", {
+      method: "POST",
+    });
+    const data = await res.json();
+    console.log(data);
+    // shuffle the array
+    data.jobs.sort(() => Math.random() - 0.5);
+    setJobList(data.jobs.slice(0, 5));
+  };
+
   return (
     <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
@@ -92,7 +109,7 @@ export default function page() {
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Sex</CardTitle>
+                  <CardTitle className="text-sm font-medium">Data</CardTitle>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
@@ -151,13 +168,24 @@ export default function page() {
               </Card>
               <Card className="col-span-4 md:col-span-3">
                 <CardHeader>
-                  <CardTitle>Recent Jobs</CardTitle>
-                  <CardDescription>
-                    Jobs we thought you might find interesting.
-                  </CardDescription>
+                  <div className="flex">
+                    <div>
+                      <CardTitle>Recent Jobs</CardTitle>
+                      <CardDescription>
+                        Jobs we thought you might find interesting.
+                      </CardDescription>
+                    </div>
+                    <Button className="white ml-auto" onClick={fetchJobs}>
+                      <RefreshCcw />
+                    </Button>
+                  </div>
                 </CardHeader>
                 <CardContent>
-                  <RecentSales />
+                  <RecentSales
+                    jobList={jobList}
+                    setJobList={setJobList}
+                    fetchJobs={fetchJobs}
+                  />
                 </CardContent>
               </Card>
             </div>

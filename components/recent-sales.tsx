@@ -7,20 +7,16 @@ import { cn } from "@/lib/utils";
 import { Icon } from "@radix-ui/react-select";
 import { Progress } from "./ui/progress";
 
-export function RecentSales() {
-  const [jobList, setJobList] = useState([]) as any[];
-
+export function RecentSales({
+  jobList,
+  setJobList,
+  fetchJobs,
+}: {
+  jobList: any;
+  setJobList: any;
+  fetchJobs: any;
+}) {
   useEffect(() => {
-    const fetchJobs = async () => {
-      const res = await fetch("/api/jobs/getAll", {
-        method: "POST",
-      });
-      const data = await res.json();
-      console.log(data);
-      // shuffle the array
-      data.jobs.sort(() => Math.random() - 0.5);
-      setJobList(data.jobs.slice(0, 5));
-    };
     fetchJobs();
   }, []);
 
