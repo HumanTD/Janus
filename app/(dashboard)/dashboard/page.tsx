@@ -29,9 +29,11 @@ export default function page() {
     });
     const data = await res.json();
     console.log(data);
-    // shuffle the array
+    if(data.success) {
+          // shuffle the array
     data.jobs.sort(() => Math.random() - 0.5);
     setJobList(data.jobs.slice(0, 5));
+    }
   };
 
   return (

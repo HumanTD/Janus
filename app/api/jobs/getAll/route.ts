@@ -14,7 +14,7 @@ export async function POST(request: Request) {
   ];
   try {
     const randomLocationIndex = Math.floor(Math.random() * locations.length);
-    const res = await fetch(`https://a856-136-233-9-98.ngrok-free.app?location=${randomLocationIndex}`, {
+    const res = await fetch(`https://a856-136-233-9-98.ngrok-free.app?location=${locations[randomLocationIndex]}`, {
         method: "GET"
     });
     const data = await res.json();
