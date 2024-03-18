@@ -10,6 +10,7 @@ import { useRef, useState } from "react";
 import { useEdgeStore } from "@/lib/edgestore";
 import { SingleImageDropzone } from "@/components/input/EdgeStoreInput";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 
 const breadcrumbItems = [{ title: "Profile", link: "/dashboard/profile" }];
 export default function page() {
@@ -18,6 +19,8 @@ export default function page() {
 
   const { edgestore } = useEdgeStore();
   const [file, setFile] = useState<File>();
+  const [progress, setProgress] = useState(0);
+  const [url, setUrl] = useState<string>();
 
   console.log(session);
   return (
@@ -36,7 +39,24 @@ export default function page() {
             setFile(file);
           }}
         />
-        <Button type="submit">Upload</Button>
+        <Button
+          type="submit"
+          onClick={async (e) => {
+            if (file) {
+              const res = await edgestore.publicFiles.upload({
+                file,
+                onProgressChange: (progress) => {
+                  setProgress(progress);
+                },
+              });
+              setUrl(res.url);
+            }
+          }}
+        >
+          Upload
+        </Button>
+        <Progress value={progress} className="w-[20%]" />
+        {url && <a>{url}</a>}
         {/* <CreateProfileOne categories={[]} initialData={null} /> */}
       </div>
     </ScrollArea>
