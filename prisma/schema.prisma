@@ -8,30 +8,58 @@ datasource db {
 }
 
 model User {
-  id     String  @id @default(uuid())
-  email  String  @unique
-  resume String  @default("")
-  name   String  @default("")
-  image  String  @default("")
-  skills Skill[] @relation("SkillToUser")
+  id           String    @id @default(uuid())
+  email        String    @unique
+  resume       String    @default("")
+  name         String    @default("")
+  image        String    @default("")
+  totalApplied Int       @default(0)
+  skills       Skill[]   @relation("SkillToUser")
+  Job          Job?      @relation(fields: [jobId], references: [id])
+  jobId        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
 }
 
 model EmployeeProfile {
-  id           String  @id @default(uuid())
-  email        String  @unique
+  id           String    @id @default(uuid())
+  email        String    @unique
   linkedinLink String
   companyId    String
-  company      Company @relation(fields: [companyId], references: [id])
+  company      Company   @relation(fields: [companyId], references: [id])
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
 }
 
 model Skill {
-  id    Int    @id @default(autoincrement())
-  name  String @unique
-  users User[] @relation("SkillToUser")
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  users     User[]    @relation("SkillToUser")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 }
 
 model Company {
   id        String            @id @default(uuid())
   name      String            @unique
   employees EmployeeProfile[]
+  Job       Job[]
+}
+
+model Job {
+  id          String    @id @default(uuid())
+  title       String
+  description String
+  companyId   String
+  company     Company   @relation(fields: [companyId], references: [id])
+  applicants  User[]
+  location    String
+  salary      Int
+  remote      Boolean
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
 }

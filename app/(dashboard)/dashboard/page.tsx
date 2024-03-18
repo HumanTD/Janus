@@ -153,7 +153,7 @@ export default function page() {
                 <CardHeader>
                   <CardTitle>Recent Jobs</CardTitle>
                   <CardDescription>
-                    Jobs we thought you might find intersting.
+                    Jobs we thought you might find interesting.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
