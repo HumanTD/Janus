@@ -92,6 +92,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         setFinalEmail={setFinalEmail}
         finalSubject={finalSubject}
         setFinalSubject={setFinalSubject}
+        companyName={data.company}
+        role={data.role}
       />
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
