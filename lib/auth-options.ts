@@ -1,6 +1,9 @@
+import { PrismaClient } from "@prisma/client";
 import { NextAuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import CredentialProvider from "next-auth/providers/credentials";
+
+const prisma = new PrismaClient();
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -30,7 +33,31 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+  callbacks: {
+    async signIn({ user, account }) {
+      if (account?.provider === "github") {
+        const existingUser = await prisma.user.findFirst({
+          where: { email: user?.email || "" },
+        });
+
+        const allUsers = await prisma.user.findMany();
+        console.log(allUsers);
+
+        if (!existingUser) {
+          await prisma.user.create({
+            data: {
+              name: user?.name || "",
+              email: user?.email || "",
+              image: user?.image || "",
+            },
+          });
+        }
+      }
+
+      return true;
+    },
+  },
   pages: {
-    signIn: "/", //sigin page
+    signIn: "/", 
   },
 };
